@@ -1,0 +1,5 @@
+{
+    "gapopen": 5,
+    "gapextend": 5,
+    "score_matrix_file" : "score_matrix.csv"
+}
