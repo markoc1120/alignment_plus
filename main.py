@@ -4,7 +4,7 @@ import sys
 from config.config import Config
 from scripts.msa_global import MSAAlignment
 from scripts.pairwise_global import PairwiseAlignment
-from scripts.utils import save_result
+from scripts.utils import get_alignment_score, save_result
 
 
 def parse_args() -> argparse.Namespace:
@@ -58,20 +58,29 @@ def main():
         model = PairwiseAlignment(config.settings)
     else:
         model = MSAAlignment(config.settings)
-    error = model.check_initialization()
+
+    err = model.check_initialization()
+    if err:
+        print(f"Error: {err}")
+        sys.exit(1)
+
     score_matrix, alignments, err = model.align(args.gap_model.lower())
     if err:
         print(f"Error: {error}")
         sys.exit(1)
 
+    try:
+        alignment_score = get_alignment_score(score_matrix, model)
+    except Exception as e:
+        print(f"Error calculating score: {e}")
+        sys.exit(1)
+
+    print(score_matrix)
     if args.output:
         save_result(alignments, args.output)
-        print(f"Aligned score: {score_matrix[-1, -1]}.")
     else:
-        print(score_matrix)
         print(alignments)
-    if error:
-        print(f"Error: {error}")
+    print(f"Aligned score: {alignment_score}.")
     # except Exception as e:
     #     print(f"Error: {e}", file=sys.stderr)
     #     sys.exit(1)
