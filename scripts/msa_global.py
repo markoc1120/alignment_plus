@@ -101,7 +101,7 @@ class MSAAlignment(AlignmentBase):
         score_matrixes = self._init_score_matrixes(dimensions, sequences)
         self._calculate_scores(score_matrixes, sequences)
         alignments = self._backtrack_linear(score_matrixes, sequences)
-        return score_matrixes, alignments, ""
+        return score_matrixes, [tuple(alignments)], ""
 
     def align(self, gap_model: str) -> tuple[np.ndarray | None, list[str] | None, str]:
         sequences = list(self.sequences.values())
